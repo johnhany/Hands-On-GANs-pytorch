@@ -4,3 +4,6 @@
 [submodule "Chp6/pix2pix"]
 	path = Chp6/pix2pix
 	url = https://github.com/johnhany/pytorch-CycleGAN-and-pix2pix
+[submodule "Chp6/pix2pixHD"]
+	path = Chp6/pix2pixHD
+	url = https://github.com/johnhany/pix2pixHD
