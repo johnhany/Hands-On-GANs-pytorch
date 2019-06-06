@@ -7,3 +7,6 @@
 [submodule "Chp6/pix2pixHD"]
 	path = Chp6/pix2pixHD
 	url = https://github.com/johnhany/pix2pixHD
+[submodule "Chp7/srgan"]
+	path = Chp7/srgan
+	url = https://github.com/johnhany/SRGAN.git
