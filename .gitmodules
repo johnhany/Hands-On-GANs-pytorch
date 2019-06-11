@@ -10,3 +10,6 @@
 [submodule "Chp7/srgan"]
 	path = Chp7/srgan
 	url = https://github.com/johnhany/SRGAN.git
+[submodule "Chp7/inpaint"]
+	path = Chp7/inpaint
+	url = https://github.com/johnhany/generative-inpainting-pytorch.git
