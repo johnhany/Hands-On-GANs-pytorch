@@ -32,9 +32,7 @@ def conv2d_fft(x, w):
     return rst
 
 
-def conv2d_gemm(x, w, stride=1):
-    # https://stackoverflow.com/a/30110497/3829845
-    w = np.flip(np.flip(w, 0), 1)
+def im2col(x, stride=1):
     rows = x.shape[0]
     cols = x.shape[1]
     kh = w.shape[0]
@@ -47,7 +45,19 @@ def conv2d_gemm(x, w, stride=1):
     L = kh*kw
 
     x_unfold = np.lib.stride_tricks.as_strided(x, shape=shape, strides=slides)
-    x_unfold = x_unfold.reshape(L, -1)[:,::stride]
+    return x_unfold.reshape(L, -1)[:,::stride]
+
+
+def conv2d_gemm(x, w, stride=1):
+    # https://stackoverflow.com/a/30110497/3829845
+    w = np.flip(np.flip(w, 0), 1)
+    rows = x.shape[0]
+    cols = x.shape[1]
+    kh = w.shape[0]
+    kw = w.shape[1]
+    L = kh*kw
+
+    x_unfold = im2col(x)
     y_unfold = np.matmul(x_unfold.transpose(), w.reshape((L, 1)))
     return y_unfold.reshape(rows-kh+1, cols-kw+1)
 
