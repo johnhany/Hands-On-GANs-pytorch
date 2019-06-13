@@ -33,6 +33,7 @@ def conv2d_fft(x, w):
 
 
 def im2col(x, stride=1):
+    # https://stackoverflow.com/a/30110497/3829845
     rows = x.shape[0]
     cols = x.shape[1]
     kh = w.shape[0]
@@ -49,7 +50,6 @@ def im2col(x, stride=1):
 
 
 def conv2d_gemm(x, w, stride=1):
-    # https://stackoverflow.com/a/30110497/3829845
     w = np.flip(np.flip(w, 0), 1)
     rows = x.shape[0]
     cols = x.shape[1]
@@ -106,3 +106,19 @@ print('Elapsed time (im2col): {}'.format(end - start))
 # print(rst3)
 error3 = np.max(np.abs(rst1 - rst0))
 print('Error: {}'.format(error3))
+
+import torch
+
+inp = torch.randn(1, 1, 512, 512)
+w = torch.randn(1, 1, 5, 5)
+start = timer()
+inp_unf = torch.nn.functional.unfold(inp, (5, 5))
+# print(inp_unf.shape)
+out_unf = inp_unf.transpose(1, 2).matmul(w.view(w.size(0), -1).t()).transpose(1, 2)
+# print(out_unf.shape)
+# out = torch.nn.functional.fold(out_unf, (508, 508), (1, 1))
+out = out_unf.view(1, 1, 508, 508)
+end = timer()
+print('Elapsed time (nn.Unfold): {}'.format(end - start))
+error4 = (torch.nn.functional.conv2d(inp, w) - out).abs().max()
+print('Error: {}'.format(error4))
