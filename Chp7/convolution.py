@@ -94,7 +94,7 @@ print('Elapsed time (FFT): {}'.format(end - start))
 
 # print(rst2.shape)
 # print(rst2)
-error2 = np.max(np.abs(rst1 - rst0))
+error2 = np.max(np.abs(rst2 - rst0))
 print('Error: {}'.format(error2))
 
 start = timer()
@@ -104,7 +104,7 @@ print('Elapsed time (im2col): {}'.format(end - start))
 
 # print(rst3.shape)
 # print(rst3)
-error3 = np.max(np.abs(rst1 - rst0))
+error3 = np.max(np.abs(rst3 - rst0))
 print('Error: {}'.format(error3))
 
 import torch
