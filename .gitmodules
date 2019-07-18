@@ -13,3 +13,6 @@
 [submodule "Chp7/inpaint"]
 	path = Chp7/inpaint
 	url = https://github.com/johnhany/generative-inpainting-pytorch.git
+[submodule "Chp9/stackgan-v2"]
+	path = Chp9/stackgan-v2
+	url = https://github.com/johnhany/StackGAN-v2
