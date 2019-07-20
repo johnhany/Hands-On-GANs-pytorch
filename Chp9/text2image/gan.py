@@ -37,9 +37,9 @@ class Generator(nn.Module):
         return layers
 
     def forward(self, noise, text):
-        embed = self.text_embedding(text)
-        embed = embed.view(embed.shape[0], embed.shape[1], 1, 1)
-        z = torch.cat([embed, noise], 1)
+        text = self.text_embedding(text)
+        text = text.view(text.shape[0], text.shape[1], 1, 1)
+        z = torch.cat([text, noise], 1)
         return self.model(z)
 
 

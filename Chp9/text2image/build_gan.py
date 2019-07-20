@@ -29,14 +29,12 @@ class Model(object):
                  device,
                  data_loader,
                  channels,
-                 img_size,
                  l1_coef,
                  l2_coef):
         self.name = name
         self.device = device
         self.data_loader = data_loader
         self.channels = channels
-        self.img_size = img_size
         self.l1_coef = l1_coef
         self.l2_coef = l2_coef
         self.netG = netG(self.channels)
@@ -138,17 +136,18 @@ class Model(object):
 
         with torch.no_grad():
             for batch_idx, data in enumerate(self.data_loader):
-                image = data['right_images'].to(self.device)
-                embed = data['right_embed'].to(self.device)
-                text = data['txt']
+                image = data['right_images'].to(self.device)[:batch_size]
+                embed = data['right_embed'].to(self.device)[:batch_size]
+                text = data['txt'][:batch_size]
                 noise = torch.randn((image.shape[0], 100, 1, 1), device=self.device)
                 viz_sample = self.netG(noise, embed)
                 vutils.save_image(viz_sample,
                                   'img_{}.png'.format(batch_idx),
-                                  nrow=batch_size,
+                                  nrow=batch_size//8,
                                   normalize=True)
                 for t in text:
                     print(t)
+                break
 
     def save_to(self,
                 path='',
@@ -171,11 +170,15 @@ class Model(object):
             print('\nLoading models from {}_G.pt and {}_D.pt ...'.format(name, name))
         ckpt_G = torch.load(os.path.join(path, '{}_G.pt'.format(name)))
         if isinstance(ckpt_G, dict) and 'state_dict' in ckpt_G:
-            self.netG_AB.load_state_dict(ckpt_G['state_dict'], strict=True)
+            self.netG.load_state_dict(ckpt_G['state_dict'], strict=True)
+        elif isinstance(ckpt_G, torch.nn.Module):
+            self.netG = ckpt_G
         else:
-            self.netG_AB.load_state_dict(ckpt_G, strict=True)
+            self.netG.load_state_dict(ckpt_G, strict=True)
         ckpt_D = torch.load(os.path.join(path, '{}_D.pt'.format(name)))
         if isinstance(ckpt_D, dict) and 'state_dict' in ckpt_D:
-            self.netD_A.load_state_dict(ckpt_D['state_dict'], strict=True)
+            self.netD.load_state_dict(ckpt_D['state_dict'], strict=True)
+        elif isinstance(ckpt_D, torch.nn.Module):
+            self.netD = ckpt_D
         else:
-            self.netD_A.load_state_dict(ckpt_D, strict=True)
+            self.netD.load_state_dict(ckpt_D, strict=True)

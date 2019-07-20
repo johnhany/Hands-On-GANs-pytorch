@@ -21,22 +21,25 @@ FLAGS = None
 def main():
     device = torch.device("cuda:0" if FLAGS.cuda else "cpu")
 
+    print('Loading data...\n')
+    dataloader = DataLoader(Text2ImageDataset(os.path.join(FLAGS.data_dir, '{}.hdf5'.format(FLAGS.dataset)), split=0),
+                            batch_size=FLAGS.batch_size, shuffle=True, num_workers=8)
+
+    print('Creating model...\n')
+    model = Model(FLAGS.model, device, dataloader, FLAGS.channels, FLAGS.l1_coef, FLAGS.l2_coef)
+
     if FLAGS.train:
-        print('Loading data...\n')
-        dataloader = DataLoader(Text2ImageDataset(os.path.join(FLAGS.data_dir, '{}.hdf5'.format(FLAGS.dataset)), split=0),
-                                batch_size=FLAGS.batch_size, shuffle=True, num_workers=0)
-        print('Creating model...\n')
-        model = Model(FLAGS.model, device, dataloader, FLAGS.channels, FLAGS.img_size, FLAGS.l1_coef, FLAGS.l2_coef)
         model.create_optim(FLAGS.lr)
 
-        # Train
+        print('Training...\n')
         model.train(FLAGS.epochs, FLAGS.log_interval, FLAGS.out_dir, True)
 
         model.save_to('')
     else:
-        model = Model(FLAGS.model, device, None, FLAGS.channels, FLAGS.img_size, FLAGS.l1_coef, FLAGS.l2_coef)
-        model.load_from(FLAGS.out_dir)
-        model.eval(mode=1, batch_size=FLAGS.batch_size)
+        model.load_from('')
+
+        print('Evaluating...\n')
+        model.eval(batch_size=64)
 
 
 if __name__ == '__main__':
@@ -50,11 +53,10 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=200, help='number of epochs')
     parser.add_argument('--batch_size', type=int, default=256, help='size of batches in training')
     parser.add_argument('--lr', type=float, default=0.0002, help='learning rate')
-    parser.add_argument('--img_size', type=int, default=64, help='size of images')
     parser.add_argument('--channels', type=int, default=3, help='number of image channels')
     parser.add_argument('--l1_coef', type=float, default=50, help='l1 coefficient')
     parser.add_argument('--l2_coef', type=float, default=100, help='l2 coefficient')
-    parser.add_argument('--log_interval', type=int, default=50, help='interval between logging and image sampling')
+    parser.add_argument('--log_interval', type=int, default=20, help='interval between logging and image sampling')
     parser.add_argument('--seed', type=int, default=1, help='random seed')
 
     FLAGS = parser.parse_args()
@@ -68,6 +70,7 @@ if __name__ == '__main__':
 
     cudnn.benchmark = True
 
+    utils.create_folder(FLAGS.out_dir)
     if FLAGS.train:
         utils.clear_folder(FLAGS.out_dir)
 
