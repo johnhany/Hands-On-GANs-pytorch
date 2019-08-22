@@ -16,3 +16,6 @@
 [submodule "Chp9/stackgan-v2"]
 	path = Chp9/stackgan-v2
 	url = https://github.com/johnhany/StackGAN-v2
+[submodule "Chp10/seqgan"]
+	path = Chp10/seqgan
+	url = https://github.com/johnhany/seqGAN.git
