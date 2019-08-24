@@ -19,3 +19,6 @@
 [submodule "Chp10/seqgan"]
 	path = Chp10/seqgan
 	url = https://github.com/johnhany/seqGAN.git
+[submodule "Chp10/segan"]
+	path = Chp10/segan
+	url = https://github.com/johnhany/segan_pytorch.git
